@@ -1,8 +1,8 @@
-AWS CloudFormation Templates
+# AWS CloudFormation Templates
 
 This repository contains following sample AWS CloudFormation templates:
 
-- Basic VPC
+- ### Basic VPC
  
   This CF template creates following resources for demonstrating basic features of a VPC:
 
