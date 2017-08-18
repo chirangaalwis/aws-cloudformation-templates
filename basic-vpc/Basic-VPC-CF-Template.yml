@@ -1,0 +1,257 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  XEnvVPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      InstanceTenancy: default
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'false'
+      Tags:
+        - Key: Name
+          Value: XEnvVPC
+
+  XEnvPrivateSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: us-east-2a
+      VpcId: !Ref XEnvVPC
+      Tags:
+        - Key: Name
+          Value: XEnvPrivateSubnet1
+  XEnvPrivateSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: us-east-2a
+      VpcId: !Ref XEnvVPC
+      Tags:
+        - Key: Name
+          Value: XEnvPrivateSubnet2
+
+  XEnvPublicSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      CidrBlock: 10.0.254.0/24
+      AvailabilityZone: us-east-2a
+      VpcId: !Ref XEnvVPC
+      Tags:
+        - Key: Name
+          Value: XEnvPublicSubnet1
+  XEnvPublicSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      CidrBlock: 10.0.252.0/24
+      AvailabilityZone: us-east-2a
+      VpcId: !Ref XEnvVPC
+      Tags:
+        - Key: Name
+          Value: XEnvPublicSubnet2
+  XEnvInternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: XEnvInternet-Gateway
+  XEnvDHCPOptions:
+    Type: 'AWS::EC2::DHCPOptions'
+    Properties:
+      DomainName: us-east-2.compute.internal
+      DomainNameServers:
+        - AmazonProvidedDNS
+  XEnvVPCDHCPOptionsAssociation:
+    Type: 'AWS::EC2::VPCDHCPOptionsAssociation'
+    Properties:
+      VpcId: !Ref XEnvVPC
+      DhcpOptionsId: !Ref XEnvDHCPOptions
+  XEnvPrivateRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref XEnvVPC
+      Tags:
+        - Key: Name
+          Value: XEnvPrivateRouteTable
+  XEnvPublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref XEnvVPC
+      Tags:
+        - Key: Name
+          Value: XEnvPublicRouteTable
+
+  XEnvPublicEC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      DisableApiTermination: 'false'
+      InstanceInitiatedShutdownBehavior: stop
+      ImageId: ami-10547475
+      InstanceType: t2.micro
+      KeyName: XEnv-us-east-2
+      Monitoring: 'false'
+      Tags:
+        - Key: Name
+          Value: XEnvPublicEC2Instance
+      NetworkInterfaces:
+        - DeleteOnTermination: 'true'
+          Description: Primary network interface
+          DeviceIndex: 0
+          SubnetId: !Ref XEnvPublicSubnet1
+          PrivateIpAddresses:
+            - PrivateIpAddress: 10.0.254.100
+              Primary: 'true'
+          GroupSet:
+            - !Ref XEnvPublicEC2InstanceSecurityGroup
+          AssociatePublicIpAddress: 'true'
+  XEnvPrivateEC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      DisableApiTermination: 'false'
+      InstanceInitiatedShutdownBehavior: stop
+      ImageId: ami-10547475
+      InstanceType: t2.micro
+      KeyName: XEnv-us-east-2
+      Monitoring: 'false'
+      Tags:
+        - Key: Name
+          Value: XEnvPrivateEC2Instance
+      NetworkInterfaces:
+        - DeleteOnTermination: 'true'
+          Description: Primary network interface
+          DeviceIndex: 0
+          SubnetId: !Ref XEnvPrivateSubnet1
+          PrivateIpAddresses:
+            - PrivateIpAddress: 10.0.1.171
+              Primary: 'true'
+          GroupSet:
+            - !Ref XEnvPrivateEC2InstanceSecurityGroup
+          AssociatePublicIpAddress: 'true'
+  XEnvPublicEC2InstanceSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: 'XEnvPublicEC2InstanceSecurityGroup'
+      VpcId: !Ref XEnvVPC
+  XEnvPrivateEC2InstanceSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: 'XEnvPrivateEC2InstanceSecurityGroup'
+      VpcId: !Ref XEnvVPC
+  XEnvVPCNetworkAcl:
+    Type: 'AWS::EC2::NetworkAcl'
+    Properties:
+      VpcId: !Ref XEnvVPC
+  XEnvVPCNetworkAclEntry1:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'true'
+      Protocol: '-1'
+      RuleAction: allow
+      RuleNumber: '100'
+      NetworkAclId: !Ref XEnvVPCNetworkAcl
+  XEnvVPCNetworkAclEntry2:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Protocol: '-1'
+      RuleAction: allow
+      RuleNumber: '100'
+      NetworkAclId: !Ref XEnvVPCNetworkAcl
+  XEnvPrivateSubnet1NetworkAclAssociation:
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      NetworkAclId: !Ref XEnvVPCNetworkAcl
+      SubnetId: !Ref XEnvPrivateSubnet1
+  XEnvPublicSubnet1NetworkAclAssociation:
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      NetworkAclId: !Ref XEnvVPCNetworkAcl
+      SubnetId: !Ref XEnvPublicSubnet1
+  XEnvPrivateSubnet2NetworkAclAssociation:
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      NetworkAclId: !Ref XEnvVPCNetworkAcl
+      SubnetId: !Ref XEnvPrivateSubnet2
+  XEnvPublicSubnet2NetworkAclAssociation:
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      NetworkAclId: !Ref XEnvVPCNetworkAcl
+      SubnetId: !Ref XEnvPublicSubnet2
+  XEnvVPCInternetGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref XEnvVPC
+      InternetGatewayId: !Ref XEnvInternetGateway
+  XEnvPrivateSubnet2RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref XEnvPrivateRouteTable
+      SubnetId: !Ref XEnvPrivateSubnet2
+  XEnvPrivateSubnet1RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref XEnvPrivateRouteTable
+      SubnetId: !Ref XEnvPrivateSubnet1
+  XEnvPublicSubnet2RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref XEnvPublicRouteTable
+      SubnetId: !Ref XEnvPublicSubnet2
+  XEnvPublicSubnet1RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref XEnvPublicRouteTable
+      SubnetId: !Ref XEnvPublicSubnet1
+  XEnvInternetGatewayPublicRouteTableRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      RouteTableId: !Ref XEnvPublicRouteTable
+      GatewayId: !Ref XEnvInternetGateway
+    DependsOn: XEnvInternetGateway
+
+  XEnvPublicEC2InstanceSecurityGroupIngressSSH:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref XEnvPublicEC2InstanceSecurityGroup
+      IpProtocol: tcp
+      FromPort: '22'
+      ToPort: '22'
+      CidrIp: 0.0.0.0/0
+  XEnvPublicEC2InstanceSecurityGroupIngressICMP:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref XEnvPublicEC2InstanceSecurityGroup
+      IpProtocol: icmp
+      FromPort: '-1'
+      ToPort: '-1'
+      CidrIp: 0.0.0.0/0
+  XEnvPrivateEC2InstanceSecurityGroupIngressICMP:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref XEnvPrivateEC2InstanceSecurityGroup
+      IpProtocol: icmp
+      FromPort: '0'
+      ToPort: '-1'
+      CidrIp: 0.0.0.0/0
+  XEnvPrivateEC2InstanceSecurityGroupIngressSSH:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref XEnvPrivateEC2InstanceSecurityGroup
+      IpProtocol: tcp
+      FromPort: '22'
+      ToPort: '22'
+      CidrIp: 0.0.0.0/0
+  XEnvPublicEC2InstanceSecurityGroupEgress:
+    Type: 'AWS::EC2::SecurityGroupEgress'
+    Properties:
+      GroupId: !Ref XEnvPublicEC2InstanceSecurityGroup
+      IpProtocol: '-1'
+      CidrIp: 0.0.0.0/0
+  XEnvPrivateEC2InstanceSecurityGroupEgress:
+    Type: 'AWS::EC2::SecurityGroupEgress'
+    Properties:
+      GroupId: !Ref XEnvPrivateEC2InstanceSecurityGroup
+      IpProtocol: '-1'
+      CidrIp: 0.0.0.0/0
+Description: ''
