@@ -1,4 +1,20 @@
 AWSTemplateFormatVersion: 2010-09-09
+Metadata:
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: Network Configuration
+        Parameters:
+          - KeyPairName
+    ParameterLabels:
+      KeyPairName:
+        default: Key Pair Name
+Parameters:
+  KeyPairName:
+    Description: >-
+      The key pair to establish a SSH connection to the servers. This should
+      be already created.
+    Type: 'AWS::EC2::KeyPair::KeyName'
 Resources:
   XEnvVPC:
     Type: 'AWS::EC2::VPC'
@@ -10,7 +26,6 @@ Resources:
       Tags:
         - Key: Name
           Value: XEnvVPC
-
   XEnvPrivateSubnet1:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -29,7 +44,6 @@ Resources:
       Tags:
         - Key: Name
           Value: XEnvPrivateSubnet2
-
   XEnvPublicSubnet1:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -53,18 +67,7 @@ Resources:
     Properties:
       Tags:
         - Key: Name
-          Value: XEnvInternet-Gateway
-  XEnvDHCPOptions:
-    Type: 'AWS::EC2::DHCPOptions'
-    Properties:
-      DomainName: us-east-2.compute.internal
-      DomainNameServers:
-        - AmazonProvidedDNS
-  XEnvVPCDHCPOptionsAssociation:
-    Type: 'AWS::EC2::VPCDHCPOptionsAssociation'
-    Properties:
-      VpcId: !Ref XEnvVPC
-      DhcpOptionsId: !Ref XEnvDHCPOptions
+          Value: XEnvInternetGateway
   XEnvPrivateRouteTable:
     Type: 'AWS::EC2::RouteTable'
     Properties:
@@ -87,7 +90,7 @@ Resources:
       InstanceInitiatedShutdownBehavior: stop
       ImageId: ami-10547475
       InstanceType: t2.micro
-      KeyName: XEnv-us-east-2
+      KeyName: !Ref KeyPairName
       Monitoring: 'false'
       Tags:
         - Key: Name
@@ -110,7 +113,7 @@ Resources:
       InstanceInitiatedShutdownBehavior: stop
       ImageId: ami-10547475
       InstanceType: t2.micro
-      KeyName: XEnv-us-east-2
+      KeyName: !Ref KeyPairName
       Monitoring: 'false'
       Tags:
         - Key: Name
@@ -125,7 +128,7 @@ Resources:
               Primary: 'true'
           GroupSet:
             - !Ref XEnvPrivateEC2InstanceSecurityGroup
-          AssociatePublicIpAddress: 'true'
+          AssociatePublicIpAddress: 'false'
   XEnvPublicEC2InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
