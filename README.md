@@ -4,7 +4,7 @@ This repository contains following sample AWS CloudFormation templates:
 
 - ### Basic VPC
  
-  This CF template creates following resources for demonstrating basic features of a VPC:
+  This CloudFormation template creates following resources for demonstrating basic features of a VPC:
 
   - A VPC
   - Two Public Subnets
