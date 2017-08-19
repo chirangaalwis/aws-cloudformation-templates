@@ -16,6 +16,7 @@ Parameters:
       be already created.
     Type: 'AWS::EC2::KeyPair::KeyName'
 Resources:
+  # Create VPC and subnets
   XEnvVPC:
     Type: 'AWS::EC2::VPC'
     Properties:
@@ -62,19 +63,21 @@ Resources:
       Tags:
         - Key: Name
           Value: XEnvPublicSubnet2
+  # Attach an internet gateway to the VPC for allowing traffic to the public 
+  # subnets from the internet
   XEnvInternetGateway:
     Type: 'AWS::EC2::InternetGateway'
     Properties:
       Tags:
         - Key: Name
           Value: XEnvInternetGateway
-  XEnvPrivateRouteTable:
-    Type: 'AWS::EC2::RouteTable'
+  XEnvVPCInternetGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
     Properties:
       VpcId: !Ref XEnvVPC
-      Tags:
-        - Key: Name
-          Value: XEnvPrivateRouteTable
+      InternetGatewayId: !Ref XEnvInternetGateway
+  # Define public route table for connecting the internet gateway 
+  # and public subnets
   XEnvPublicRouteTable:
     Type: 'AWS::EC2::RouteTable'
     Properties:
@@ -82,7 +85,42 @@ Resources:
       Tags:
         - Key: Name
           Value: XEnvPublicRouteTable
-
+  XEnvPublicSubnet2RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref XEnvPublicRouteTable
+      SubnetId: !Ref XEnvPublicSubnet2
+  XEnvPublicSubnet1RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref XEnvPublicRouteTable
+      SubnetId: !Ref XEnvPublicSubnet1
+  XEnvInternetGatewayPublicRouteTableRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      RouteTableId: !Ref XEnvPublicRouteTable
+      GatewayId: !Ref XEnvInternetGateway
+    DependsOn: XEnvInternetGateway
+  # Definte private route table for configuring routing for private subnets
+  XEnvPrivateRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref XEnvVPC
+      Tags:
+        - Key: Name
+          Value: XEnvPrivateRouteTable
+  XEnvPrivateSubnet2RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref XEnvPrivateRouteTable
+      SubnetId: !Ref XEnvPrivateSubnet2
+  XEnvPrivateSubnet1RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref XEnvPrivateRouteTable
+      SubnetId: !Ref XEnvPrivateSubnet1
+  # Create EC2 instances
   XEnvPublicEC2Instance:
     Type: 'AWS::EC2::Instance'
     Properties:
@@ -129,6 +167,7 @@ Resources:
           GroupSet:
             - !Ref XEnvPrivateEC2InstanceSecurityGroup
           AssociatePublicIpAddress: 'false'
+  # Define EC2 instance security groups
   XEnvPublicEC2InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -139,80 +178,6 @@ Resources:
     Properties:
       GroupDescription: 'XEnvPrivateEC2InstanceSecurityGroup'
       VpcId: !Ref XEnvVPC
-  XEnvVPCNetworkAcl:
-    Type: 'AWS::EC2::NetworkAcl'
-    Properties:
-      VpcId: !Ref XEnvVPC
-  XEnvVPCNetworkAclEntry1:
-    Type: 'AWS::EC2::NetworkAclEntry'
-    Properties:
-      CidrBlock: 0.0.0.0/0
-      Egress: 'true'
-      Protocol: '-1'
-      RuleAction: allow
-      RuleNumber: '100'
-      NetworkAclId: !Ref XEnvVPCNetworkAcl
-  XEnvVPCNetworkAclEntry2:
-    Type: 'AWS::EC2::NetworkAclEntry'
-    Properties:
-      CidrBlock: 0.0.0.0/0
-      Protocol: '-1'
-      RuleAction: allow
-      RuleNumber: '100'
-      NetworkAclId: !Ref XEnvVPCNetworkAcl
-  XEnvPrivateSubnet1NetworkAclAssociation:
-    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
-    Properties:
-      NetworkAclId: !Ref XEnvVPCNetworkAcl
-      SubnetId: !Ref XEnvPrivateSubnet1
-  XEnvPublicSubnet1NetworkAclAssociation:
-    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
-    Properties:
-      NetworkAclId: !Ref XEnvVPCNetworkAcl
-      SubnetId: !Ref XEnvPublicSubnet1
-  XEnvPrivateSubnet2NetworkAclAssociation:
-    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
-    Properties:
-      NetworkAclId: !Ref XEnvVPCNetworkAcl
-      SubnetId: !Ref XEnvPrivateSubnet2
-  XEnvPublicSubnet2NetworkAclAssociation:
-    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
-    Properties:
-      NetworkAclId: !Ref XEnvVPCNetworkAcl
-      SubnetId: !Ref XEnvPublicSubnet2
-  XEnvVPCInternetGatewayAttachment:
-    Type: 'AWS::EC2::VPCGatewayAttachment'
-    Properties:
-      VpcId: !Ref XEnvVPC
-      InternetGatewayId: !Ref XEnvInternetGateway
-  XEnvPrivateSubnet2RouteTableAssociation:
-    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-    Properties:
-      RouteTableId: !Ref XEnvPrivateRouteTable
-      SubnetId: !Ref XEnvPrivateSubnet2
-  XEnvPrivateSubnet1RouteTableAssociation:
-    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-    Properties:
-      RouteTableId: !Ref XEnvPrivateRouteTable
-      SubnetId: !Ref XEnvPrivateSubnet1
-  XEnvPublicSubnet2RouteTableAssociation:
-    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-    Properties:
-      RouteTableId: !Ref XEnvPublicRouteTable
-      SubnetId: !Ref XEnvPublicSubnet2
-  XEnvPublicSubnet1RouteTableAssociation:
-    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-    Properties:
-      RouteTableId: !Ref XEnvPublicRouteTable
-      SubnetId: !Ref XEnvPublicSubnet1
-  XEnvInternetGatewayPublicRouteTableRoute:
-    Type: 'AWS::EC2::Route'
-    Properties:
-      DestinationCidrBlock: 0.0.0.0/0
-      RouteTableId: !Ref XEnvPublicRouteTable
-      GatewayId: !Ref XEnvInternetGateway
-    DependsOn: XEnvInternetGateway
-
   XEnvPublicEC2InstanceSecurityGroupIngressSSH:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
