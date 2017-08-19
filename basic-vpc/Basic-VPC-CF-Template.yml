@@ -129,7 +129,7 @@ Resources:
       RouteTableId: !Ref XEnvPrivateRouteTable
       SubnetId: !Ref XEnvPrivateSubnet1
   # Create EC2 instances
-  XEnvPublicEC2Instance:
+  XEnvPublicEC2Instance1:
     Type: 'AWS::EC2::Instance'
     Properties:
       DisableApiTermination: 'false'
@@ -140,19 +140,19 @@ Resources:
       Monitoring: 'false'
       Tags:
         - Key: Name
-          Value: XEnvPublicEC2Instance
+          Value: XEnvPublicEC2Instance1
       NetworkInterfaces:
         - DeleteOnTermination: 'true'
           Description: Primary network interface
           DeviceIndex: 0
           SubnetId: !Ref XEnvPublicSubnet1
           PrivateIpAddresses:
-            - PrivateIpAddress: 10.0.254.100
+            - PrivateIpAddress: 10.0.254.101
               Primary: 'true'
           GroupSet:
             - !Ref XEnvPublicEC2InstanceSecurityGroup
           AssociatePublicIpAddress: 'true'
-  XEnvPrivateEC2Instance:
+  XEnvPublicEC2Instance2:
     Type: 'AWS::EC2::Instance'
     Properties:
       DisableApiTermination: 'false'
@@ -163,14 +163,60 @@ Resources:
       Monitoring: 'false'
       Tags:
         - Key: Name
-          Value: XEnvPrivateEC2Instance
+          Value: XEnvPublicEC2Instance2
+      NetworkInterfaces:
+        - DeleteOnTermination: 'true'
+          Description: Primary network interface
+          DeviceIndex: 0
+          SubnetId: !Ref XEnvPublicSubnet1
+          PrivateIpAddresses:
+            - PrivateIpAddress: 10.0.254.102
+              Primary: 'true'
+          GroupSet:
+            - !Ref XEnvPublicEC2InstanceSecurityGroup
+          AssociatePublicIpAddress: 'true'
+  XEnvPrivateEC2Instance1:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      DisableApiTermination: 'false'
+      InstanceInitiatedShutdownBehavior: stop
+      ImageId: ami-10547475
+      InstanceType: t2.micro
+      KeyName: !Ref KeyPairName
+      Monitoring: 'false'
+      Tags:
+        - Key: Name
+          Value: XEnvPrivateEC2Instance1
       NetworkInterfaces:
         - DeleteOnTermination: 'true'
           Description: Primary network interface
           DeviceIndex: 0
           SubnetId: !Ref XEnvPrivateSubnet1
           PrivateIpAddresses:
-            - PrivateIpAddress: 10.0.1.171
+            - PrivateIpAddress: 10.0.1.101
+              Primary: 'true'
+          GroupSet:
+            - !Ref XEnvPrivateEC2InstanceSecurityGroup
+          AssociatePublicIpAddress: 'false'
+  XEnvPrivateEC2Instance2:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      DisableApiTermination: 'false'
+      InstanceInitiatedShutdownBehavior: stop
+      ImageId: ami-10547475
+      InstanceType: t2.micro
+      KeyName: !Ref KeyPairName
+      Monitoring: 'false'
+      Tags:
+        - Key: Name
+          Value: XEnvPrivateEC2Instance2
+      NetworkInterfaces:
+        - DeleteOnTermination: 'true'
+          Description: Primary network interface
+          DeviceIndex: 0
+          SubnetId: !Ref XEnvPrivateSubnet1
+          PrivateIpAddresses:
+            - PrivateIpAddress: 10.0.1.102
               Primary: 'true'
           GroupSet:
             - !Ref XEnvPrivateEC2InstanceSecurityGroup
