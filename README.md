@@ -4,11 +4,11 @@ This repository contains following sample AWS CloudFormation templates:
 
 - ### Basic VPC
 
-This template provides a reference architecture for creating a VPC with two public subnets, two private subnets and one EC2 instance in each subnet.
+This template provides a reference architecture for creating a VPC with two public subnets, two private subnets, one EC2 instance in each subnet and two public IP addresses for EC2 instances in public subnets for exposing a HTTP endpoint.
 
 - ### VPC with Load Balancer
 
-This template provides a reference architecture for creating a VPC with two public subnets, two private subnets, one EC2 instance in each subnet and a classic load balancer for exposing the HTTP server deployed in each EC2 instance.
+This template provides a reference architecture for creating a VPC with two public subnets, two private subnets, one EC2 instance in each subnet and a classic load balancer for exposing a HTTP endpoint.
 
 - ### VPC with Application Load Balancer
 
