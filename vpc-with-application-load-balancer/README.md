@@ -1,4 +1,4 @@
-# VPC with Load Balancer CloudFormation Template
+# VPC with Application Load Balancer CloudFormation Template
 
 This CloudFormation template creates following resources for demonstrating basic features of a VPC:
 
@@ -10,4 +10,4 @@ This CloudFormation template creates following resources for demonstrating basic
   - An Internet Gateway
   - Public Route Table
   - A Private Route Table
-  - A Load Balancer
+  - An Application Load Balancer
