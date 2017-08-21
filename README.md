@@ -16,4 +16,8 @@ This template provides a reference architecture for creating a VPC with two publ
  
 - ### VPC with Autoscaling Groups
 
-This template provides a reference architecture for creating a VPC with two public subnets, two private subnets, one autoscaling group in each subnet for providing auto-healing for EC2 instances and an application load balancer for exposing a HTTP endpoint.
+This template provides a reference architecture for creating a VPC with two public subnets, two private subnets, an autoscaling group in each subnet for providing auto-healing for EC2 instances and an application load balancer for exposing a HTTP endpoint.
+
+- ### VPC with EFS
+
+This template provides a reference architecture for creating a VPC with two public subnets, two private subnets, an autoscaling group in each subnet for providing auto-healing for EC2 instances, an elastic file system mounted to /mnt/efs folder in two EC2 instances in the public subnets and an application load balancer for exposing a HTTP endpoint.
