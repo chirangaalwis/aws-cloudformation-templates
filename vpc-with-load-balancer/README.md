@@ -1,6 +1,6 @@
-# VPC with Load Balancer CloudFormation Template
+# VPC with Load Balancer Cloud Formation Template
 
-This CloudFormation template creates following resources for demonstrating basic features of a VPC:
+This Cloud Formation template creates following resources for demonstrating load balancing capability using a classic load balancer:
 
   - A VPC
   - Two Public Subnets

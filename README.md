@@ -1,4 +1,4 @@
-# AWS CloudFormation Templates
+# AWS Cloud Formation Templates
 
 This repository contains following sample AWS CloudFormation templates:
 
@@ -14,7 +14,7 @@ This template provides a reference architecture for creating a VPC with two publ
 
 This template provides a reference architecture for creating a VPC with two public subnets, two private subnets, one EC2 instance in each subnet and an application load balancer for exposing a HTTP endpoint.
  
-- ### VPC with Autoscaling Groups
+- ### VPC with Auto-Healing
 
 This template provides a reference architecture for creating a VPC with two public subnets, two private subnets, an autoscaling group in each subnet for providing auto-healing for EC2 instances and an application load balancer for exposing a HTTP endpoint.
 

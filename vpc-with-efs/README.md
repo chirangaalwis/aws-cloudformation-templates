@@ -1,6 +1,6 @@
-# VPC with EFS CloudFormation Template
+# VPC with EFS Cloud Formation Template
 
-This CloudFormation template creates following resources for demonstrating basic features of a VPC:
+This CloudFormation template creates following resources for demonstrating the usage of an elastic file system:
 
   - A VPC
   - Two Public Subnets
@@ -13,4 +13,4 @@ This CloudFormation template creates following resources for demonstrating basic
   - A Private Route Table
   - An Application Load Balancer
 
-  In this template the autoscaling groups have been used for providing auto-healing for EC2 instances. An elastic file system have been mounted /mnt/efs folder in two EC2 instances in the public subnets.
+The elastic file system have been mounted to /mnt/efs folder in two EC2 instances in the public subnets.
