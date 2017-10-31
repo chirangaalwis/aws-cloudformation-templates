@@ -1,6 +1,8 @@
 # VPC with Auto-Healing CloudFormation Template
 
-This Cloud Formation template creates following resources for demonstrating auto-healing capability for EC2 instances:
+This CloudFormation template creates following resources for demonstrating auto-healing capability for EC2 instances using health of the server sockets.
+
+## AWS Resources:
 
   - A VPC
   - Two Public Subnets
@@ -12,4 +14,6 @@ This Cloud Formation template creates following resources for demonstrating auto
   - A Private Route Table
   - An Application Load Balancer
 
-Auto-healing has been implemented using auto-scaling groups without using dynamic scalability behaviour.
+## Notes:
+
+  - Auto-healing has been implemented using the auto-scaling groups and the health checks of the application load balancer target groups.

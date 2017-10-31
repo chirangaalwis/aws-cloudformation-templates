@@ -1,6 +1,8 @@
-# Basic VPC Cloud Formation Template
+# Basic VPC CloudFormation Template
 
-This Cloud Formation template creates following resources for demonstrating basic features of a VPC:
+This CloudFormation template creates following resources for demonstrating basic features of a VPC.
+
+## AWS Resources:
 
   - A VPC
   - Two Public Subnets

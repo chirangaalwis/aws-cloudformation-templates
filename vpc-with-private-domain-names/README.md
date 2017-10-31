@@ -1,4 +1,4 @@
-# VPC with Private Domain Names Cloud Formation Template
+# VPC with Private Domain Names CloudFormation Template
 
 This CloudFormation (CF) template creates following resources for demonstrating the usage of private domain names using Route 53 Private Hosted Zones.
 
@@ -18,6 +18,7 @@ This CloudFormation (CF) template creates following resources for demonstrating 
   - An Application Load Balancer
 
 ## Notes:
+
   - When using private hosted zones with autoscaling groups the IP addresses of the domain names cannot be predefined, instead they need to be updated at the EC2 instance startup.
   - If a domain name is updated manually outside the CF template, the CF template deletion process fails because of resources being updated outside its context.
   - Therefore, a custom AWS resource has been used for creating the Route 53 Private Hosted Zone and its domain names for avoiding this problem.

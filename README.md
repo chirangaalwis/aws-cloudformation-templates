@@ -1,4 +1,4 @@
-# AWS Cloud Formation Templates
+# AWS CloudFormation Templates
 
 This repository contains following sample AWS CloudFormation templates:
 

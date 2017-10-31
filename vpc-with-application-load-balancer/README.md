@@ -1,6 +1,8 @@
-# VPC with Application Load Balancer Cloud Formation Template
+# VPC with Application Load Balancer CloudFormation Template
 
-This Cloud Formation template creates following resources for demonstrating load balancing capability using an application load balancer:
+This CloudFormation template creates following resources for demonstrating load balancing capability using an application load balancer.
+
+## AWS Resources:
 
   - A VPC
   - Two Public Subnets

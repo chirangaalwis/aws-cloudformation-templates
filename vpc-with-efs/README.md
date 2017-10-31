@@ -1,6 +1,8 @@
-# VPC with EFS Cloud Formation Template
+# VPC with EFS CloudFormation Template
 
-This CloudFormation template creates following resources for demonstrating the usage of an elastic file system:
+This CloudFormation template creates following resources for demonstrating the usage of an elastic file system.
+
+## AWS Resources:
 
   - A VPC
   - Two Public Subnets
@@ -13,4 +15,6 @@ This CloudFormation template creates following resources for demonstrating the u
   - A Private Route Table
   - An Application Load Balancer
 
-The elastic file system have been mounted to /mnt/efs folder in two EC2 instances in the public subnets.
+## Notes:
+
+  - The elastic file system have been mounted to /mnt/efs folder in two EC2 instances in the public subnets.

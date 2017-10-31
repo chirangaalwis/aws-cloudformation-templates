@@ -1,6 +1,8 @@
-# VPC with Load Balancer Cloud Formation Template
+# VPC with Load Balancer CloudFormation Template
 
-This Cloud Formation template creates following resources for demonstrating load balancing capability using a classic load balancer:
+This CloudFormation template creates following resources for demonstrating load balancing capability using a classic load balancer.
+
+## AWS Resources:
 
   - A VPC
   - Two Public Subnets
@@ -10,4 +12,4 @@ This Cloud Formation template creates following resources for demonstrating load
   - An Internet Gateway
   - Public Route Table
   - A Private Route Table
-  - A Load Balancer
+  - A Classic Load Balancer
